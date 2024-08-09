@@ -16,7 +16,7 @@ jobs:
       - name: 환경 변수 로드
         id: load-env
         run: |
-          echo "${{ secrets.SGINAL_SERVER01_ENV }}" | while IFS= read -r line; do
+          echo "${{ secrets.SIGNAL_SERVER01_ENV }}" | while IFS= read -r line; do
             # 주석과 빈 줄 무시
             if [[ -n "$line" && "$line" != \#* ]]; then
               echo "$line" >> $GITHUB_ENV
