@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  express:
+    image: junmop950/jm-total-hub:signal-latest
+    ports:
+      - "7000:7000"
+    environment:
+      SIGNAL_SERVER_REDIS_URL: ${SIGNAL_SERVER_REDIS_URL}
+      SIGNAL_SERVER_REDIS_PASSWORD: ${SIGNAL_SERVER_REDIS_PASSWORD}
+      SIGNAL_SERVER_REDIS_PORT: ${SIGNAL_SERVER_REDIS_PORT}
+
+      NGINX_SERVER_EC2_HOST: ${NGINX_SERVER_EC2_HOST}
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass ${SIGNAL_SERVER_REDIS_PASSWORD}
+    environment:
+      REDIS_PASSWORD: ${SIGNAL_SERVER_REDIS_PASSWORD}
