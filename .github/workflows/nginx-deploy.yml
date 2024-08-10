@@ -57,6 +57,10 @@ jobs:
             export EXPRESS_SERVER01_EC2_PROTOCOL=${{ env.EXPRESS_SERVER01_EC2_PROTOCOL }}
             export EXPRESS_SERVER01_EC2_HOST=${{ env.EXPRESS_SERVER01_EC2_HOST }}
             export EXPRESS_SERVER01_EC2_PORT=${{ env.EXPRESS_SERVER01_EC2_PORT }}
+            # Express01 환경변수
+            export SIGNAL_SERVER01_PROTOCOL=${{ env.SIGNAL_SERVER01_PROTOCOL }}
+            export SIGNAL_SERVER01_EC2_HOST=${{ env.SIGNAL_SERVER01_EC2_HOST }}
+            export SIGNAL_SERVER01_PORT=${{ env.SIGNAL_SERVER01_PORT }}
             # nginx.conf 템플릿 파일에서 환경 변수 치환
             envsubst '\
               \$REACT_SERVER01_EC2_PROTOCOL \
