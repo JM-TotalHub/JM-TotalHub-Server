@@ -28,8 +28,7 @@ server {
     }
 
     location /signal/socket/ {
-        rewrite ^/signal/socket/(.*)$ /$1 break;
-        proxy_pass ${SIGNAL_SERVER01_SOCKET_PROTOCOL}://${SIGNAL_SERVER01_EC2_HOST}:${SIGNAL_SERVER01_PORT};
+        proxy_pass ${SIGNAL_SERVER01_PROTOCOL}://${SIGNAL_SERVER01_EC2_HOST}:${SIGNAL_SERVER01_PORT};
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
