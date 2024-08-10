@@ -27,14 +27,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location /signal/socket/ {
-        proxy_pass ${SIGNAL_SERVER01_PROTOCOL}://${SIGNAL_SERVER01_EC2_HOST}:${SIGNAL_SERVER01_PORT};
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_read_timeout 86400;
-    }
-
     location /socket.io/ {
         proxy_pass ${SIGNAL_SERVER01_PROTOCOL}://${SIGNAL_SERVER01_EC2_HOST}:${SIGNAL_SERVER01_PORT};
         proxy_http_version 1.1;
