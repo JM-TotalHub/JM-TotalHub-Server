@@ -61,6 +61,7 @@ jobs:
             export SIGNAL_SERVER01_PROTOCOL=${{ env.SIGNAL_SERVER01_PROTOCOL }}
             export SIGNAL_SERVER01_EC2_HOST=${{ env.SIGNAL_SERVER01_EC2_HOST }}
             export SIGNAL_SERVER01_PORT=${{ env.SIGNAL_SERVER01_PORT }}
+            export SIGNAL_SERVER01_SOCKET_PROTOCOL=${{ env.SIGNAL_SERVER01_SOCKET_PROTOCOL }}
             # nginx.conf 템플릿 파일에서 환경 변수 치환
             envsubst '\
               \$REACT_SERVER01_EC2_PROTOCOL \
@@ -70,6 +71,7 @@ jobs:
               \$EXPRESS_SERVER01_EC2_HOST \
               \$EXPRESS_SERVER01_EC2_PORT \
               \$SIGNAL_SERVER01_PROTOCOL \
+              \$SIGNAL_SERVER01_SOCKET_PROTOCOL \
               \$SIGNAL_SERVER01_EC2_HOST \
               \$SIGNAL_SERVER01_PORT' < ~/nginx/nginx.conf.template > ~/nginx/nginx.conf     
             # 도커 컴포즈 실행
