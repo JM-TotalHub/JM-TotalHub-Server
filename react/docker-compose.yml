@@ -1,19 +1,5 @@
-# version: "3.9"
-# services:
-#   react:
-#     image: junmop950/jm-total-hub:react-latest
-#     ports:
-#       - "3000:3000"
-#     environment:
-#       REACT_APP_REACT_SERVER_ENV_STATUS: ${REACT_APP_REACT_SERVER_ENV_STATUS}
-#       REACT_APP_NGINX_SERVER01_HOST: ${REACT_APP_NGINX_SERVER01_HOST}
-
-
 services:
   nginx:
     image: junmop950/jm-total-hub:react-latest
     ports:
       - "80:80"  # 호스트의 80 포트를 컨테이너의 80 포트에 매핑
-    environment:
-      REACT_APP_REACT_SERVER_ENV_STATUS: ${REACT_APP_REACT_SERVER_ENV_STATUS}
-      REACT_APP_NGINX_SERVER01_HOST: ${REACT_APP_NGINX_SERVER01_HOST}
