@@ -1,0 +1,107 @@
+name: 중앙 서버 배포
+
+on:
+  push:
+    paths:
+      - "server/**" # server 폴더 내의 파일이 변경될 때만 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: 환경 변수 로드
+        id: load-env
+        run: |
+          echo "${{ secrets.NGINX_SERVER_ENV }}" | while IFS= read -r line; do
+            # 주석과 빈 줄 무시
+            if [[ -n "$line" && "$line" != \#* ]]; then
+              echo "$line" >> $GITHUB_ENV
+            fi
+          done
+
+      - name: server 폴더 생성(있으면 무시)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.NGINX_SERVER_EC2_HOST }}
+          username: ${{ env.NGINX_SERVER_EC2_USERNAME }}
+          key: ${{ secrets.NGINX_SERVER_EC2_PRIVATE_KEY }}
+          script: |
+            mkdir -p ~/server
+
+      - name: docker-compose.yml을 ec2서버 server폴더에 업로드
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ env.NGINX_SERVER_EC2_HOST }}
+          username: ${{ env.NGINX_SERVER_EC2_USERNAME }}
+          key: ${{ secrets.NGINX_SERVER_EC2_PRIVATE_KEY }}
+          source: "server/docker-compose.yml"
+          target: "~/"
+
+      - name: Docker Buildx 설정
+        uses: docker/setup-buildx-action@v1
+
+      - name: Docker Hub 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Nginx Docker 이미지 빌드 & 푸시
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./server/nginx/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/jm-total-hub:server-nginx-latest
+          build-args: |
+            REACT_SERVER01_EC2_HOST=${{ env.REACT_SERVER01_EC2_HOST }}
+            REACT_SERVER01_EC2_PROTOCOL=${{ env.REACT_SERVER01_EC2_PROTOCOL }}
+            REACT_SERVER01_EC2_PORT=${{ env.REACT_SERVER01_EC2_PORT }}
+
+            EXPRESS_SERVER01_EC2_HOST=${{ env.EXPRESS_SERVER01_EC2_HOST }}
+            EXPRESS_SERVER01_EC2_PROTOCOL=${{ env.EXPRESS_SERVER01_EC2_PROTOCOL }}
+            EXPRESS_SERVER01_EC2_PORT=${{ env.EXPRESS_SERVER01_EC2_PORT }}
+
+            SIGNAL_SERVER01_EC2_HOST=${{ env.SIGNAL_SERVER01_EC2_HOST }}
+            SIGNAL_SERVER01_PROTOCOL=${{ env.SIGNAL_SERVER01_PROTOCOL }}
+            SIGNAL_SERVER01_SOCKET_PROTOCOL=${{ env.SIGNAL_SERVER01_SOCKET_PROTOCOL }}
+            SIGNAL_SERVER01_PORT=${{ env.SIGNAL_SERVER01_PORT }}
+
+            SIGNAL_SERVER01_EC_HOST=${{ env.SIGNAL_SERVER01_EC_HOST }}
+            SIGNAL_SERVER01_PORT=${{ env.SIGNAL_SERVER01_PORT }}
+            SIGNAL_SERVER01_SOCKET_PROTOCOL=${{ env.SIGNAL_SERVER01_SOCKET_PROTOCOL }}
+      
+      - name: Coturn(Ice Server) Docker 이미지 빌드 & 푸시
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./server/signal/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/jm-total-hub:sever-ice-latest
+          build-args: |
+            ICE_SERVER_LISTENING_IP=${{ env.ICE_SERVER_LISTENING_IP }}
+            ICE_SERVER_EXTERNAL_IP=${{ env.ICE_SERVER_EXTERNAL_IP }}
+            ICE_SERVER_PORT=${{ env.ICE_SERVER_PORT }}
+            ICE_SERVER_MIN_PORT=${{ env.ICE_SERVER_MIN_PORT }}
+            ICE_SERVER_MAX_PORT=${{ env.ICE_SERVER_MAX_PORT }}
+            ICE_SERVER_REALM=${{ env.ICE_SERVER_REALM }}
+            ICE_SERVER_USER=${{ env.ICE_SERVER_USER }}
+
+      - name: 도커 컴포즈 실행
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.NGINX_SERVER_EC2_HOST }}
+          username: ${{ env.NGINX_SERVER_EC2_USERNAME }}
+          key: ${{ secrets.NGINX_SERVER_EC2_PRIVATE_KEY }}
+          script: |
+            docker image prune -a -f --filter "until=12h"
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            # 도커 컴포즈 실행
+            cd ~/server
+            sudo -E docker-compose pull  
+            sudo -E docker-compose up -d   
+            sudo -E docker-compose logs 

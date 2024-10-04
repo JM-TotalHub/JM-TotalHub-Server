@@ -1,0 +1,42 @@
+# TURN 서버가 수신 대기할 포트
+listening-port=${ICE_SERVER_PORT}
+
+# TURN 서버가 수신 대기할 IP 주소
+listening-ip=${ICE_SERVER_LISTENING_IP}
+
+# NAT 뒤에 있을 때 TURN 서버의 공인 IP 주소
+external-ip=${ICE_SERVER_EXTERNAL_IP}
+
+# TURN 서버에서 사용할 수 있는 최소 포트 번호 (동적 포트 할당)
+min-port=${ICE_SERVER_MIN_PORT}
+
+# TURN 서버에서 사용할 수 있는 최대 포트 번호 (동적 포트 할당)
+max-port=${ICE_SERVER_MAX_PORT}
+
+# TURN 서버의 인증 및 권한 부여에 사용되는 영역 (realm)
+ # 일반적으로 도메인 이름이나 고유한 문자열
+realm=${ICE_SERVER_REALM} 
+
+# define user and password (usr:pass)
+user=${ICE_SERVER_USER}
+
+# 비밀 키를 사용하여 인증을 수행하도록 설정
+# use-auth-secret
+
+# 클라이언트가 TURN 서버에 연결할 때 사용할 정적 비밀 키(use-auth-secret)
+# static-auth-secret=
+# 이 값을 클라이언트와 공유해야 함
+
+# 요청에 대한 지문(fingerprint)을 사용하여 무결성 확인
+fingerprint
+
+# 긴 인증 메커니즘을 사용하도록 설정
+lt-cred-mech
+
+# 루프백 IP 주소에서의 요청을 허용하지 않음 (보안 강화)
+no-loopback-peers
+
+# 멀티캐스트 IP 주소에서의 요청을 허용하지 않음
+no-multicast-peers
+
+

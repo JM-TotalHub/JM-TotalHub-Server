@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: junmop950/jm-total-hub:server-nginx-latest
+    ports:
+      - "80:80"
+  signal:
+    image: junmop950/jm-total-hub:sever-ice-latest
+    ports:
+      - "3478:3478/udp"  
+      - "3478:3478/tcp"  
+      - "49152-49200:49152-49200/udp"  
