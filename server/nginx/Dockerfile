@@ -2,6 +2,7 @@ FROM nginx:latest
 
 COPY /server/nginx/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
+
 # 필요한 ARG 정의
 ARG REACT_SERVER_ENV_STATUS
 ARG REACT_SERVER01_EC2_HOST
